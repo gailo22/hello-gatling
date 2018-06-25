@@ -8,16 +8,22 @@ class HelloSimulation extends Simulation {
 
   val httpProtocol = http
     .baseURL("http://localhost:8080")
-    .acceptHeader("text/plain")
+    .acceptHeader("application/json,text/plain")
     .acceptEncodingHeader("gzip, deflate")
     .userAgentHeader("Gatling")
 
   val scn = scenario("HelloSimulation")
     .repeat(10) {
-      exec(http("GET /api/hello-async").get("/api/hello-async"))
+      exec(http("GET /api/hello").get("/api/hello"))
+    }
+//    .repeat(10) {
+//      exec(http("GET /api/hello-async").get("/api/hello-async"))
+//    }
+    .repeat(10) {
+      exec(http("GET /api/hello-rx").get("/api/hello-rx"))
     }
 
   setUp(
-    scn.inject(atOnceUsers(1))
+    scn.inject(atOnceUsers(1000))
   ).protocols(httpProtocol)
 }
