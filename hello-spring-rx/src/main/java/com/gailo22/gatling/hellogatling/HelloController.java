@@ -3,18 +3,14 @@ package com.gailo22.gatling.hellogatling;
 
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Flux;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.CompletableFuture;
@@ -29,13 +25,13 @@ public class HelloController {
     @Autowired
     private ExecutorService executorService;
 
+    @Autowired
+    private PathService pathService;
+
     @GetMapping("/api/hello")
     public String hello() {
         return "hello";
     }
-
-    @Value("${path.hello}")
-    private String textPath;
 
     @Async
     @GetMapping("/api/hello-async")
@@ -61,7 +57,7 @@ public class HelloController {
 
     @GetMapping("/api/get/hello")
     public String getHello() throws IOException {
-        Path path = resolvePath();
+        Path path = pathService.getResolvedPath();
         Stream<String> lines = Files.lines(path);
         List<String> collect = lines.map(x -> x.split("=")[1])
             .limit(1)
@@ -70,15 +66,6 @@ public class HelloController {
         return collect.get(0);
     }
 
-    public Path resolvePath() throws IOException {
-        if (textPath.startsWith("classpath:")) {
-            String path = textPath.split(":")[1];
-            File file = new ClassPathResource(path + "/hello.txt").getFile();
-            return file.toPath();
-        } else {
-            return Paths.get(textPath + "/hello.txt");
-        }
-    }
 }
 
 @Data
