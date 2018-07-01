@@ -10,12 +10,12 @@ import java.util.concurrent.Executors;
 @SpringBootApplication
 public class HelloGatlingApplication {
 
-	@Bean
-	ExecutorService executor() {
-		return Executors.newFixedThreadPool(10);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(HelloGatlingApplication.class, args);
+    }
 
-	public static void main(String[] args) {
-		SpringApplication.run(HelloGatlingApplication.class, args);
-	}
+    @Bean
+    ExecutorService executor() {
+        return Executors.newFixedThreadPool(10);
+    }
 }
